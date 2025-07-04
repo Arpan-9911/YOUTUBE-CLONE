@@ -9,6 +9,7 @@ export const uploadContent = async (req, res) => {
     if (!title || !description || !category || !video) {
       return res.status(400).json({ error: 'All fields are required' });
     }
+    console.log(video, channelName, userId, title, description, category, userId);
     const folderPath = `youtube-clone/${channelName}`;
     const videoRes = await cloudinary.uploader.upload(video, {
       resource_type: "video",
