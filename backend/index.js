@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import http from 'http';
+import https from 'https';
+import cron from 'node-cron'
 
 dotenv.config();
 const app = express();
@@ -22,6 +24,15 @@ app.get("/", (req, res) => {
 
 app.use("/user", userRoutes);
 app.use("/content", contentRoutes);
+
+const BACKEND_URL = process.env.BACKEND_URL
+cron.schedule('*/10 * * * *', () => {
+  https.get(BACKEND_URL, (res) => {
+    console.log(res.statusCode)
+  }).on('error', (err) => {
+    console.log(err)
+  })
+})
 
 const PORT = process.env.PORT || 5000;
 mongoose
