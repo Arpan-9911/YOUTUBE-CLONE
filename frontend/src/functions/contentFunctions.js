@@ -18,7 +18,8 @@ export const getMyContent = () => async (dispatch) => {
     const { data } = await api.getMyContent()
     dispatch({ type: 'GET_MY_CONTENTS', payload: data.content })
   } catch (error) {
-    toast.error(error.response?.data?.message || "Get My Content Failed")
+    const message = error.response?.data?.message || "Get My Content Failed"
+    return new Error(message)
   }
 }
 
@@ -39,7 +40,8 @@ export const getAllContents = () => async (dispatch) => {
     const { data } = await api.getAllContents();
     dispatch({ type: 'GET_ALL_CONTENTS', payload: data.content });
   } catch (error) {
-    toast.error(error.response?.data?.message || "Get All Contents Failed");
+    const message = error.response?.data?.message || "Get All Contents Failed"
+    return new Error(message)
   }
 };
 

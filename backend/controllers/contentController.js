@@ -8,7 +8,7 @@ export const uploadContent = async (req, res) => {
     const { title, description, category, channelName } = req.body
     const { userId } = req
     const videoBuffer = req.file?.buffer;
-    if (!title || !description || !category || !video) {
+    if (!title || !description || !category || !req.file) {
       return res.status(400).json({ error: 'All fields are required' });
     }
     const folderPath = `youtube-clone/${channelName}`;
