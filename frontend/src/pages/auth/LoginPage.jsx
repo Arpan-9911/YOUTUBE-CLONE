@@ -44,15 +44,17 @@ const LoginPage = () => {
     <div className='h-screen w-screen bg-gray-200 flex justify-center items-center'>
       <div className='sm:p-8 p-4 bg-white rounded shadow border-gray-500 flex flex-col gap-8'>
         <h1 className='text-xl font-semibold text-center'>{isSignUp ? 'Sign Up' : 'Log In'} With</h1>
-        <GoogleLogin
-          onSuccess={(credentialResponse) => {
-            const decoded = jwtDecode(credentialResponse.credential);
-            handleGoogleLogin(decoded);
-          }}
-          onError={() => {
-            console.log('Login Failed');
-          }}
-        />
+        <div className="w-full flex justify-center">
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              const decoded = jwtDecode(credentialResponse.credential);
+              handleGoogleLogin(decoded);
+            }}
+            onError={() => {
+              console.log('Login Failed');
+            }}
+          />
+        </div>
         <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
           {isSignUp && (
             <div className='flex flex-col'>

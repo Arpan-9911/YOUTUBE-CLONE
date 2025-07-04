@@ -1,4 +1,4 @@
-const userReducer = (state = null, action) => {
+const userReducer = (state = { data: null }, action) => {
   switch (action.type) {
     case 'AUTH':
       localStorage.setItem('profile', JSON.stringify({...action?.data}))
