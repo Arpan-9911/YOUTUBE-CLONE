@@ -1,10 +1,11 @@
 import express from 'express'
 import { uploadContent, getMyContents, deleteContent, getAllContents, viewVideo, likeVideo, watchLater, deleteHistory, addComment } from '../controllers/contentController.js';
 import auth from '../middlewares/auth.js'
+import upload from '../middlewares/multer.js';
 
 const router = express.Router();
 
-router.post('/create', auth, uploadContent);
+router.post('/create', auth, upload.single('video'), uploadContent);
 router.get('/my-contents', auth, getMyContents);
 router.delete('/delete/:id', auth, deleteContent);
 router.get('/all-contents', auth, getAllContents);

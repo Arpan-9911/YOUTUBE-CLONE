@@ -4,15 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import CreateChannel from './CreateChannel'
 import { uploadContent } from '../../functions/contentFunctions'
 import { useDispatch, useSelector } from 'react-redux'
-
-const getBase64 = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = error => reject(error)
-  })
-}
+import toast from 'react-hot-toast'
 
 const CreateContent = () => {
   const user = useSelector(state => state.userReducer.data)
@@ -31,22 +23,20 @@ const CreateContent = () => {
     e.preventDefault()
     try {
       setUploading(true)
-      const base64Video = await getBase64(video)
-      await dispatch(uploadContent({
-        title,
-        description,
-        category,
-        channelName,
-        video: base64Video
-      }, navigate))
-      setUploading(false)
-      setVideo(null)
-      setTitle('')
-      setDescription('')
-      setCategory('video')
-      navigate('/channel')
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("category", category);
+      formData.append("channelName", channelName);
+      formData.append("video", video);
+      await dispatch(uploadContent(formData, navigate));
+      setUploading(false);
+      setVideo(null);
+      setTitle('');
+      setDescription('');
+      setCategory('video');
     } catch (error) {
-      alert(error.message)
+      toast.error(error.response?.data?.message || "Content Upload Failed")
       setUploading(false)
     }
   }

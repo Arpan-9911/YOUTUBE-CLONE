@@ -1,20 +1,32 @@
 import Content from '../models/contentModel.js';
 import User from '../models/userModel.js'
 import cloudinary from '../cloudinary.js'
+import streamifier from 'streamifier';
 
 export const uploadContent = async (req, res) => {
   try {
-    const { title, description, category, video, channelName } = req.body
+    const { title, description, category, channelName } = req.body
     const { userId } = req
+    const videoBuffer = req.file?.buffer;
     if (!title || !description || !category || !video) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-    console.log(video, channelName, userId, title, description, category, userId);
     const folderPath = `youtube-clone/${channelName}`;
-    const videoRes = await cloudinary.uploader.upload(video, {
-      resource_type: "video",
-      folder: folderPath,
-    });
+    const uploadStream = () =>
+      new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            resource_type: 'video',
+            folder: folderPath,
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        streamifier.createReadStream(videoBuffer).pipe(stream);
+      });
+    const videoRes = await uploadStream();
     const thumbnailUrl = cloudinary.url(videoRes.public_id + ".jpg", {
       resource_type: "video",
       transformation: [
