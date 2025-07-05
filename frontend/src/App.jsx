@@ -21,7 +21,7 @@ import { currentUser } from './functions/currentUser'
 import { getAllContents, getMyContent } from './functions/contentFunctions'
 import io from 'socket.io-client'
 
-const socket = io(import.meta.env.VITE_BACKEND_URL, {
+const socket = io(import.meta.env.VITE_API, {
   transports: ['websocket'],
 })
 

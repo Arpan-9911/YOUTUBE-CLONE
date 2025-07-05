@@ -19,7 +19,9 @@ const io = new Server(server, {
 })
 
 app.set('io', io)
-io.on('connection', () => {})
+io.on('connection', (socket) => {
+  console.log('✅ Connected to socket:', socket.id)
+})
 
 import userRoutes from './routes/userRoute.js'
 import contentRoutes from './routes/contentRoute.js'
