@@ -14,7 +14,9 @@ const MyAccount = () => {
     user && <div className='sm:p-5 p-2 flex flex-col gap-4'>
       <div className='flex max-sm:flex-col gap-2 sm:items-start justify-between'>
         <div className='flex gap-2'>
-          <div className='h-24 w-24 rounded text-5xl bg-gray-600 flex items-center justify-center text-white'>A</div>
+          <div className='h-24 w-24 rounded text-5xl bg-gray-600 flex items-center justify-center text-white'>
+            {user.name.charAt(0).toUpperCase()}
+          </div>
           <div>
             <h1 className='font-semibold text-2xl'>{user.name}</h1>
             <h2 className='text-gray-600'>{user.email}</h2>

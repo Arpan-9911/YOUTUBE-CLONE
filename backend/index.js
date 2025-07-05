@@ -5,10 +5,21 @@ import dotenv from 'dotenv';
 import http from 'http';
 import https from 'https';
 import cron from 'node-cron'
+import { Server } from 'socket.io'
 
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+  }
+})
+
+app.set('io', io)
+io.on('connection', () => {})
 
 import userRoutes from './routes/userRoute.js'
 import contentRoutes from './routes/contentRoute.js'

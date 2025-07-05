@@ -19,6 +19,11 @@ import WatchLater from './pages/account/WatchLater'
 import { useDispatch, useSelector } from 'react-redux'
 import { currentUser } from './functions/currentUser'
 import { getAllContents, getMyContent } from './functions/contentFunctions'
+import io from 'socket.io-client'
+
+const socket = io(import.meta.env.VITE_BACKEND_URL, {
+  transports: ['websocket'],
+})
 
 const App = () => {
   const dispatch = useDispatch()
@@ -26,6 +31,29 @@ const App = () => {
     dispatch(currentUser())
     dispatch(getAllContents())
     dispatch(getMyContent())
+    // Socket events
+    socket.on('newContent', (data) => {
+      dispatch({ type: 'UPLOAD_CONTENT', payload: data })
+    })
+    socket.on('deleteContent', (id) => {
+      dispatch({ type: 'DELETE_MY_CONTENT', contentId: id })
+    })
+    socket.on('viewVideo', (data) => {
+      dispatch({ type: 'UPDATE_CONTENT', data })
+    })
+    socket.on('likeVideo', (data) => {
+      dispatch({ type: 'UPDATE_CONTENT', data })
+    })
+    socket.on('addComment', (data) => {
+      dispatch({ type: 'UPDATE_CONTENT', data })
+    })
+    return () => {
+      socket.off('newContent')
+      socket.off('deleteContent')
+      socket.off('viewVideo')
+      socket.off('likeVideo')
+      socket.off('addComment')
+    }
   }, [dispatch])
 
   const user = useSelector(state => state.userReducer?.data)

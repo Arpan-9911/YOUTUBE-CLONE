@@ -27,10 +27,13 @@ export const uploadContent = async (req, res) => {
         streamifier.createReadStream(videoBuffer).pipe(stream);
       });
     const videoRes = await uploadStream();
+    const isShort = category === 'short';
+    const width = isShort ? 270 : 480;
+    const height = isShort ? 480 : 270;
     const thumbnailUrl = cloudinary.url(videoRes.public_id + ".jpg", {
       resource_type: "video",
       transformation: [
-        { width: 480, height: 270, crop: "pad", background: "auto:predominant_gradient" },
+        { width: width, height: height, crop: "pad", background: "auto:predominant_gradient" },
         { start_offset: "1" }
       ],
     });
@@ -43,6 +46,10 @@ export const uploadContent = async (req, res) => {
       thumbnailUrl,
       category,
     });
+
+    const io = req.app.get('io');
+    io.emit('newContent', newContent);
+
     res.status(201).json(newContent);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -66,6 +73,10 @@ export const deleteContent = async (req, res) => {
     if (!deletedContent) {
       return res.status(404).json({ error: 'Content not found' });
     }
+
+    const io = req.app.get('io');
+    io.emit('deleteContent', id);
+
     res.status(200).json({ message: 'Content deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -138,6 +149,10 @@ export const viewVideo = async (req, res) => {
       content.views.push(user._id)
       await content.save()
     }
+
+    const io = req.app.get('io');
+    io.emit('viewVideo', content);
+
     res.status(200).json(content);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -167,6 +182,10 @@ export const likeVideo = async (req, res) => {
       user.likedVideos = user.likedVideos.filter(videoId => videoId.toString() !== id.toString());
     }
     await user.save();
+
+    const io = req.app.get('io');
+    io.emit('likeVideo', content);
+
     res.status(200).json(content);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -221,6 +240,10 @@ export const addComment = async (req, res) => {
     }
     content.comments.push({ commentedBy: user.name, message: comment });
     await content.save();
+
+    const io = req.app.get('io');
+    io.emit('addComment', content);
+
     res.status(200).json(content);
   } catch (error) {
     res.status(500).json({ message: error.message });
